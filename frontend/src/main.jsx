@@ -12,7 +12,9 @@ const container = document.getElementById('root')
 const root = createRoot(container)
 
 root.render(
-  <BrowserRouter>
+    // basename は末尾スラッシュなし
+  <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+
     <Routes>
       {/* Dashboard を / に */}
       <Route path="/" element={<App />} />

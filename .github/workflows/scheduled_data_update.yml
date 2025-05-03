@@ -10,6 +10,8 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+    env:
+      NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}  
     steps:
       - uses: actions/checkout@v3
 
@@ -27,6 +29,8 @@ jobs:
       - name: Run batch to fetch & generate
         working-directory: backend
         run: |
+          cd backend
+          . venv/bin/activate
           python main.py
 
       - name: Commit & Push data
