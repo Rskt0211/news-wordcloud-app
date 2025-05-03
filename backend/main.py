@@ -1,3 +1,4 @@
+# main.py
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -72,18 +73,90 @@ def list_wordclouds():
 
 # ─── ニュース取得関数 ────────────────────────────────────────────
 def fetch_news(category: str):
+    """
+    NewsAPI からトップヘッドラインを取得して articles を返却。
+    失敗時は空リストを返す。
+    """
+    # 1) API URL 組み立て
     url = (
         "https://newsapi.org/v2/top-headlines"
         f"?country=us&category={category}"
-        f"&pageSize=5&apiKey={NEWSAPI_KEY}"
+        f"&pageSize=100&apiKey={NEWSAPI_KEY}"
     )
-    logger.debug(f"Fetching URL: {url}")
+    logger.info(f"Fetching (category={category}) → {url}")
+
+    # 2) HTTP リクエスト
     resp = requests.get(url)
-    data = resp.json()
+    if resp.status_code != 200:
+        logger.error(f"HTTP Error {resp.status_code} for category {category}")
+        return []
+
+    # 3) JSON デコード
+    try:
+        data = resp.json()
+    except Exception as e:
+        logger.error(f"JSON decode error for {category}: {e}")
+        return []
+
+    # 4) API エラーチェック
     if data.get("status") != "ok":
         logger.error(f"NewsAPI error for {category}: {data}")
         return []
-    return data.get("articles", [])
+
+    # 5) 記事取得 & ロギング
+    articles = data.get("articles", [])
+    logger.info(f"[DEBUG] {category} → fetched {len(articles)} articles")
+
+    return articles
+
+
+    """
+    NewsAPI の everything エンドポイントを使い、
+    直近12時間以内の記事をページネーションで取得。
+    1ページあたり pageSize=100, page=1,2,... をループ。
+    レスポンスヘッダー X-RateLimit-Remaining をチェックして枯渇前に停止。
+    """
+    all_articles = []
+    now = datetime.datetime.utcnow()
+    from_dt = (now - datetime.timedelta(hours=12)).isoformat() + "Z"
+    page = 1
+    page_size = 100
+
+    while True:
+        params = {
+            "q": category,
+            "language": "en",
+            "from": from_dt,
+            "pageSize": page_size,
+            "page": page,
+            "apiKey": NEWSAPI_KEY
+        }
+        url = "https://newsapi.org/v2/everything"
+        logger.info(f"Fetching (category={category}, page={page})")
+        resp = requests.get(url, params=params)
+        data = resp.json()
+
+        if data.get("status") != "ok":
+            logger.error(f"Failed fetch {category} page {page}: {data}")
+            break
+
+        articles = data.get("articles", [])
+        all_articles.extend(articles)
+
+        # ページ内の記事数が満たない or no articles -> 終了
+        if len(articles) < page_size:
+            break
+
+        # 残りリクエスト数を確認。残り1以下なら打ち切る
+        remaining = int(resp.headers.get("X-RateLimit-Remaining", "0"))
+        logger.info(f"X-RateLimit-Remaining={remaining}")
+        if remaining <= 1:
+            logger.warning("Rate limit nearly exhausted, stop pagination.")
+            break
+
+        page += 1
+
+    return all_articles
 
 # ─── ワードクラウド生成関数 ─────────────────────────────────────
 def generate_wordcloud(text: str, save_path: Path):
@@ -111,9 +184,15 @@ def update_all_categories():
         generate_wordcloud(titles, dir_path / f"{cat}_wordcloud.png")
     logger.info(f"[BATCH END] {now}")
 
-# ─── APScheduler で 90 分おきにバッチ実行 ────────────────────────
+# ─── APScheduler で 朝6時・18時にバッチ実行 ─────────────────────
 scheduler = BackgroundScheduler()
-scheduler.add_job(update_all_categories, 'interval', minutes=90)
+scheduler.add_job(
+    update_all_categories,
+    trigger="cron",
+    hour="6,18",
+    minute=0,
+    timezone="Asia/Tokyo"
+)
 scheduler.start()
 
 # ─── アプリ起動 ───────────────────────────────────────────────

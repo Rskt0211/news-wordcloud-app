@@ -1,0 +1,59 @@
+# .github/workflows/scheduled_data_update.yml
+name: Scheduled Data Update
+
+on:
+  schedule:
+    # JST 06:00 → UTC 21:00, JST 18:00 → UTC 09:00
+    - cron:  '0 21 * * *'
+    - cron:  '0 9 * * *'
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run batch to fetch & generate
+        working-directory: backend
+        run: |
+          python main.py
+
+      - name: Commit & Push data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data
+          git diff --quiet && echo "No changes to commit" || (
+            git commit -m "chore: scheduled data update"
+            git push
+          )
+
+      - name: Purge old data (7 days)
+        working-directory: backend
+        run: |
+          python - << 'EOF'
+          import datetime, shutil
+          from pathlib import Path
+          BASE_DIR = Path('data')
+          cutoff = datetime.datetime.now() - datetime.timedelta(days=7)
+          for d in BASE_DIR.iterdir():
+              if d.is_dir():
+                  try:
+                      ts = datetime.datetime.strptime(d.name, "%Y-%m-%d_%H-%M")
+                 except:
+                    continue
+                  if ts < cutoff:
+                      shutil.rmtree(d)
+          EOF
+
