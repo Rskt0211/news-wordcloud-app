@@ -8,9 +8,9 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-center mb-2">ニューストレンドを一目で把握</h1>
+      <h1 className="text-3xl font-bold text-center mb-2">World News Trends: What's Hot Now?</h1>
       <p className="text-center text-gray-600 mb-8">
-        カテゴリ別ワードクラウドと関連ニュースで、話題をすぐにキャッチ。
+      Instantly grasp main topics by category.
       </p>
 
       <h2 className="text-xl font-semibold mb-4">カテゴリ一覧</h2>
