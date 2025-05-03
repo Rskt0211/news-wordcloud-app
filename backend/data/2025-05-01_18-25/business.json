@@ -1,0 +1,67 @@
+[
+  {
+    "source": {
+      "id": "the-washington-post",
+      "name": "The Washington Post"
+    },
+    "author": "The Washington Post",
+    "title": "Trump eases tariffs on imported auto parts through executive order - The Washington Post",
+    "description": null,
+    "url": "https://www.washingtonpost.com/business/2025/04/29/trump-auto-tariffs-cars-white-house-trade-prices/",
+    "urlToImage": null,
+    "publishedAt": "2025-04-30T06:51:57Z",
+    "content": null
+  },
+  {
+    "source": {
+      "id": null,
+      "name": "CNBC"
+    },
+    "author": "CNBC",
+    "title": "Auto giant Stellantis suspends full-year guidance due to uncertainties over Trump tariffs - CNBC",
+    "description": null,
+    "url": "https://www.cnbc.com/2025/04/30/stellantis-suspends-2025-guidance-due-to-trump-tariff-uncertainties.html",
+    "urlToImage": null,
+    "publishedAt": "2025-04-30T06:12:56Z",
+    "content": null
+  },
+  {
+    "source": {
+      "id": null,
+      "name": "CNBC"
+    },
+    "author": "Sam Meredith",
+    "title": "Volkswagen posts 37% drop in first-quarter profit, says Trump tariffs could weigh on outlook - CNBC",
+    "description": "Europe's biggest carmaker reported operating profit of 2.9 billion euros ($3.3 billion) for the first three months of the year.",
+    "url": "https://www.cnbc.com/2025/04/30/volkswagen-q1-earnings-2025.html",
+    "urlToImage": "https://image.cnbcfm.com/api/v1/image/108137900-1745924691018-gettyimages-2208561608-_97a5122_ncu9ajxi.jpeg?v=1745924750&w=1920&h=1080",
+    "publishedAt": "2025-04-30T05:30:12Z",
+    "content": "German auto giant Volkswagen on Wednesday reported a substantial drop in first-quarter profit as the carmaker navigates the disruptive impact of U.S. tariffs on the global car industry.\r\nEurope's big… [+3069 chars]"
+  },
+  {
+    "source": {
+      "id": null,
+      "name": "CNBC"
+    },
+    "author": "Pia Singh",
+    "title": "S&P 500 futures slip after index posts longest win streak since November: Live updates - CNBC",
+    "description": "Stocks closed higher on Tuesday, propelled by investors' hopes for a trade deal.",
+    "url": "https://www.cnbc.com/2025/04/29/stock-market-today-live-updates.html",
+    "urlToImage": "https://image.cnbcfm.com/api/v1/image/108138057-1745938930609-gettyimages-2212037711-AFP_43WX734.jpeg?v=1745938982&w=1920&h=1080",
+    "publishedAt": "2025-04-30T05:30:00Z",
+    "content": "Stock futures tied to the S&amp;P 500 were lower early Wednesday as traders prepared for a blast of economic data to wrap up a tumultuous month of trading.\r\nS&amp;P 500 futures slipped 0.51%, while N… [+2492 chars]"
+  },
+  {
+    "source": {
+      "id": null,
+      "name": "Financial Times"
+    },
+    "author": "Taylor Nicole Rogers, Stephen Foley, Patrick Temple-West",
+    "title": "Tariffs hit home for small US businesses that rely on Chinese imports - Financial Times",
+    "description": "Growing worries that a trade war could suffocate a crucial driver of employment and economic growth",
+    "url": "https://www.ft.com/content/ae8277b7-f8fb-4262-811d-ed8f3d9c70fe",
+    "urlToImage": "https://www.ft.com/__origami/service/image/v2/images/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F2b44f896-b9df-472f-9d57-812d200ade55.jpg?source=next-barrier-page",
+    "publishedAt": "2025-04-30T04:00:14Z",
+    "content": "Markets Insights\r\nAccess expert analysis on global markets and economic trends.\r\nEconomist Perspectives\r\nInsights from leading economists and market strategists including Katie Martin and John Plende… [+276 chars]"
+  }
+]

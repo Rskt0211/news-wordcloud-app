@@ -1,0 +1,115 @@
+/* src/index.css */
+
+/* ページ全体の背景 */
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #1B2A5E, #382A6E);
+  color: #E0E6FF;
+  font-family: Arial, sans-serif;
+}
+
+/* 全体コンテナ は透明のまま、中身だけ白背景にする場合は container に背景を付ける */
+/* 今回は透明のまま行きます */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ヘッダー */
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  color: #FFFFFF;
+}
+header p {
+  font-size: 1.1rem;
+  color: rgba(224, 230, 255, 0.8);
+}
+
+/* ① カテゴリボタン群 */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.button-group button {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 0;
+  background: linear-gradient(135deg, #5C4BCF, #8270FF);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+}
+.button-group button:hover {
+  opacity: .9;
+  transform: translateY(-2px);
+}
+
+/* ② 各カテゴリセクション */
+.category-section {
+  margin-bottom: 60px;
+  padding-top: 20px;
+}
+.category-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 16px;
+  color: #F0F5FF;
+  border-bottom: 2px solid rgba(224, 230, 255, 0.3);
+  padding-bottom: 8px;
+}
+
+/* ワードクラウド画像 */
+.category-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  margin-bottom: 16px;
+}
+
+/* 関連リンク一覧 */
+.related-list {
+  list-style: none;
+  padding: 0;
+}
+.related-list li + li {
+  margin-top: 8px;
+}
+.related-list a {
+  display: inline-block;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background .2s;
+}
+.related-list a:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* フッター広告 */
+footer {
+  margin-top: 80px;
+  text-align: center;
+  font-size: .875rem;
+  color: rgba(224, 230, 255, 0.7);
+  padding: 20px 0;
+  border-top: 1px solid rgba(224, 230, 255, 0.2);
+}
+
+/* 関連ニュース記事 の見出し */
+.related-title {
+  font-size: 1.2rem;
+  margin: 12px 0 8px;
+  color: #E0E6FF;
+  font-weight: 500;
+}

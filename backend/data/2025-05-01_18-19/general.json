@@ -1,0 +1,67 @@
+[
+  {
+    "source": {
+      "id": "espn",
+      "name": "ESPN"
+    },
+    "author": "Ramona Shelburne",
+    "title": "Murray comes up big as Nuggets control Clips - ESPN",
+    "description": "Jamal Murray scored a game-high 43 points to pace the Nuggets to a Game 5 win over the Clippers and a 3-2 series lead.",
+    "url": "https://www.espn.com/nba/story/_/id/44929823/jamal-murray-puts-43-nuggets-take-3-2-lead-vs-clippers",
+    "urlToImage": "https://a3.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0430%2Fr1485978_1296x729_16%2D9.jpg",
+    "publishedAt": "2025-04-30T07:22:00Z",
+    "content": "DENVER -- Jamal Murray has broken the hearts of the Los Angeles Lakers in the playoffs so many times, he figured it was time to do the same to the LA Clippers. This time it wasn't a back-breaking buz… [+3979 chars]"
+  },
+  {
+    "source": {
+      "id": null,
+      "name": "The Boston Globe"
+    },
+    "author": null,
+    "title": "Celtics’ third-quarter explosion ousts Orlando, and other takeaways from Game 5 - The Boston Globe",
+    "description": "After Paolo Banchero headed to the bench with five fouls, Jayson Tatum & Co. took over the game and blew the Magic out of TD Garden.",
+    "url": "https://www.bostonglobe.com/2025/04/29/sports/celtics-magic-game-5-analysis/",
+    "urlToImage": "https://bostonglobe-prod.cdn.arcpublishing.com/resizer/v2/FWQ72LGRPJX5BBSWZUEFTGPJCA.JPG?auth=d283cd7b50f0cd9c104b19525b1d2f1973e00635f90a90d88d6e446baf58bcd5&width=1440",
+    "publishedAt": "2025-04-30T06:11:15Z",
+    "content": "When the quarter came to a merciful end, the Celtics had stretched their lead to 21 points. Orlando could never recover, and Boston eventually rolled to a 120-89 win to win the series, 4-1.\r\nBoston w… [+3572 chars]"
+  },
+  {
+    "source": {
+      "id": "cnn",
+      "name": "CNN"
+    },
+    "author": "Rhea Mogul, Sophia Saifi",
+    "title": "Pakistan claims it has ‘credible intelligence’ India will strike within 36 hours - CNN",
+    "description": "Tensions between India and Pakistan have escalated further after a top Pakistani official claimed early Wednesday to have “credible intelligence” that New Delhi will carry out a military action against Islamabad within the next two days.",
+    "url": "https://www.cnn.com/2025/04/29/asia/kashmir-pakistan-india-tension-military-intl-hnk/index.html",
+    "urlToImage": "https://media.cnn.com/api/v1/images/stellar/prod/ap25113409962448.jpg?c=16x9&q=w_800,c_fill",
+    "publishedAt": "2025-04-30T05:57:00Z",
+    "content": "Tensions between India and Pakistan have escalated further after a top Pakistani official claimed early Wednesday to have credible intelligence that New Delhi will carry out a military action against… [+4712 chars]"
+  },
+  {
+    "source": {
+      "id": null,
+      "name": "CNBC"
+    },
+    "author": "Sam Meredith",
+    "title": "Volkswagen posts 37% drop in first-quarter profit, says Trump tariffs could weigh on outlook - CNBC",
+    "description": "Europe's biggest carmaker reported operating profit of 2.9 billion euros ($3.3 billion) for the first three months of the year.",
+    "url": "https://www.cnbc.com/2025/04/30/volkswagen-q1-earnings-2025.html",
+    "urlToImage": "https://image.cnbcfm.com/api/v1/image/108137900-1745924691018-gettyimages-2208561608-_97a5122_ncu9ajxi.jpeg?v=1745924750&w=1920&h=1080",
+    "publishedAt": "2025-04-30T05:30:12Z",
+    "content": "German auto giant Volkswagen on Wednesday reported a substantial drop in first-quarter profit as the carmaker navigates the disruptive impact of U.S. tariffs on the global car industry.\r\nEurope's big… [+3069 chars]"
+  },
+  {
+    "source": {
+      "id": "the-washington-post",
+      "name": "The Washington Post"
+    },
+    "author": "Patrick Svitek",
+    "title": "Whitmer just got what she wanted from Trump. But she’s making a risky bet. - The Washington Post",
+    "description": "The Democratic governor from Michigan found success in lobbying Trump to bring a new fighter mission to an Air National Guard base. But not everyone in her party is happy.",
+    "url": "https://www.washingtonpost.com/politics/2025/04/29/whitmer-trump-selfridge-announcement-democrats-2028/",
+    "urlToImage": "https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/46235KW2O73HSM7BWRITYPHWLI_size-normalized.jpg&w=1440",
+    "publishedAt": "2025-04-30T05:24:49Z",
+    "content": "President Donald Trump hugged Gov. Gretchen Whitmer upon landing Tuesday in Michigan to announce a new fighter mission at Selfridge Air National Guard Base. He lavished praise on her during a speech … [+7154 chars]"
+  }
+]
