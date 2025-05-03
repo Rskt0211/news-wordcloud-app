@@ -43,8 +43,8 @@ export default function App() {
   return (
     <div className="container">
       <header>
-        <h1>ニューストレンドを一目で把握</h1>
-        <p>カテゴリ別ワードクラウドと関連ニュースで、話題をすぐにキャッチ。</p>
+        <h1>World News Trends: What's Hot Now?</h1>
+        <p>Instantly grasp main topics by category.</p>
       </header>
 
       {/* カテゴリボタン */}
@@ -70,12 +70,12 @@ export default function App() {
                 className="category-image"
               />
                {/* ここから追加 */}
-             <h3 className="related-title">関連ニュース記事</h3>
+             <h3 className="related-title">Find related articles for more details.</h3>
 
               {/* 関連ニュースリンク上位5件 */}
               <ul className="related-list">
                 {articles.length === 0 && (
-                  <li>関連記事が見つかりませんでした</li>
+                  <li>No related articles found yet.</li>
                 )}
                 {articles.slice(0, 5).map((a, i) => (
                   <li key={i}>
