@@ -2,21 +2,20 @@
 name: Scheduled Data Update & Frontend Build
 
 permissions:
-  contents: write    # リポジトリ内ファイルの読み書きを許可
-  pages: write       # GitHub Pages への公開が必要なら
+  contents: write
+  pages:   write
 
 on:
   push:
     branches:
       - beta
   schedule:
-    - cron: "0 6,18 * * *"
+    - cron: '0 6,18 * * *'   # 毎日 06:00,18:00 UTC (日本時間 15:00,03:00)
   workflow_dispatch:
 
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
-
     env:
       NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
 
@@ -25,15 +24,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          persist-credentials: true   # ←ここはデフォルト true ですが念のため
+          persist-credentials: true
 
-      # ── Python 環境セットアップ
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # ── backend/requirements.txt を install → バッチ実行
       - name: Install backend deps & run batch
         working-directory: backend
         run: |
@@ -41,31 +38,29 @@ jobs:
           pip install -r requirements.txt
           python main.py batch
 
-      # ── 最新フォルダを docs/static 配下へコピー
       - name: Copy latest static data
         run: |
           LATEST=$(ls backend/data | sort | tail -n1)
           mkdir -p docs/static/$LATEST
           cp -r backend/data/$LATEST/* docs/static/$LATEST/
-         # フロントエンドが読むための最新タイムスタンプ一覧を作成
+          # フロントエンド用に最新タイムスタンプを JSON でも出力
           echo "[\"$LATEST\"]" > docs/static/latest.json
 
-      # ── フロントエンドビルド
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
       - name: Install JS deps
         working-directory: frontend
         run: npm ci
+
       - name: Build Frontend
         working-directory: frontend
         run: npm run build
 
-      # ── docs & data をコミット＆プッシュ (beta)
       - name: Commit & Push updates
         run: |
-          # GitHub Actions の Push を走らせるためのユーザ設定
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs backend/data
