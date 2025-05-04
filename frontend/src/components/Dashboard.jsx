@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom'
 const categories = ['business','entertainment','general','health','technology']
 
 export default function Dashboard() {
-  // Vite が inject するベース URL
-  const base = import.meta.env.BASE_URL || '/'
+  // Vite が inject するベース URL（末尾スラッシュを除去）
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '') || ''
 
   // 最新タイムスタンプ取得
   const [latestTS, setLatestTS] = useState('')
   useEffect(() => {
-    fetch(`${base}static/latest.json`)
+    fetch(`${base}/static/latest.json`)
       .then(res => {
         if (!res.ok) throw new Error('latest.json が取得できませんでした')
         return res.json()
@@ -26,7 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!latestTS) return
     categories.forEach(cat => {
-      fetch(`${base}static/${latestTS}/${cat}.json`)
+      fetch(`${base}/static/${latestTS}/${cat}.json`)
         .then(res => {
           if (!res.ok) throw new Error(`${cat}.json を取得できませんでした`)
           return res.json()
@@ -66,18 +66,17 @@ export default function Dashboard() {
           const articles = newsByCategory[cat] || []
           return (
             <section id={cat} key={cat}>
-              <h2 className="text-2xl font-semibold mb-4">
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </h2>
+              <h2 className="text-2xl font-semibold mb-4 capitalize">{cat}</h2>
 
               {latestTS ? (
                 <img
-                  src={`${base}static/${latestTS}/${cat}_wordcloud.png`}
+                  src={`${base}/static/${latestTS}/${cat}_wordcloud.png`}
                   alt={`${cat} wordcloud`}
                   className="w-full max-w-xl mx-auto mb-4"
+                  onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/placeholder.png' }}
                 />
               ) : (
-                <div className="w-full max-w-xl h-48 bg-gray-200 mx-auto mb-4 animate-pulse rounded"></div>
+                <div className="w-full max-w-xl h-48 bg-gray-200 mx-auto mb-4 animate-pulse rounded" />
               )}
 
               <h3 className="text-xl font-medium mb-2">Related Articles</h3>
