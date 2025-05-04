@@ -1,9 +1,10 @@
+// src/App.jsx
 import React, { useEffect, useState } from 'react'
 
 const categories = ['business', 'entertainment', 'general', 'health', 'technology']
 
 export default function App() {
-  // Vite の BASE_URL（例 /news-wordcloud-app/）の末尾スラッシュを削除
+  // 出力先 GH Pages などで BASE_URL の末尾スラッシュを排除
   const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 
   // 最新バッチのタイムスタンプ
@@ -11,11 +12,9 @@ export default function App() {
   // カテゴリごとの関連記事データ
   const [newsByCategory, setNewsByCategory] = useState({})
 
-  
-  // 1) 起動時に最新タイムスタンプを static/latest.json から取得
+  // 1) 起動時に最新タイムスタンプを docs/static/latest.json から取得
   useEffect(() => {
-    fetch(`${base}static/latest.json`)
-
+    fetch(`${base}/static/latest.json`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch latest timestamp')
         return res.json()
@@ -28,11 +27,12 @@ export default function App() {
       .catch(console.error)
   }, [base])
 
-  // 2) タイムスタンプが決まったら各カテゴリのJSONを取得
+  // 2) 最新タイムスタンプがセットされたら各カテゴリの JSON を取得
   useEffect(() => {
     if (!latestTS) return
+
     categories.forEach(cat => {
-      fetch(`${import.meta.env.BASE_URL}static/${latestTS}/${cat}.json`)
+      fetch(`${base}/static/${latestTS}/${cat}.json`)
         .then(res => {
           if (!res.ok) throw new Error(`${cat}.json fetch failed`)
           return res.json()
@@ -46,7 +46,7 @@ export default function App() {
     })
   }, [base, latestTS])
 
-  // ボタンクリックでスクロール
+  // ボタンクリックで指定セクションにスクロール
   const scrollTo = id => {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -77,14 +77,12 @@ export default function App() {
           const articles = newsByCategory[cat] || []
           return (
             <section id={cat} key={cat}>
-              <h2 className="text-2xl font-semibold mb-4 capitalize">
-                {cat}
-              </h2>
+              <h2 className="text-2xl font-semibold mb-4 capitalize">{cat}</h2>
 
               {/* ワードクラウド画像 */}
               {latestTS ? (
                 <img
-                  src={`${import.meta.env.BASE_URL}static/${ts}/${cat}_wordcloud.png`}
+                  src={`${base}/static/${latestTS}/${cat}_wordcloud.png`}
                   alt={`${cat} wordcloud`}
                   className="w-full max-w-xl mx-auto mb-4"
                 />
@@ -95,22 +93,21 @@ export default function App() {
               {/* 関連ニュース */}
               <h3 className="text-xl font-medium mb-2">Related Articles</h3>
               <ul className="list-disc list-inside space-y-1">
-                {articles.length === 0 ? (
-                  <li>No related articles found yet.</li>
-                ) : (
-                  articles.slice(0,5).map((a,i) => (
-                    <li key={i}>
-                      <a
-                        href={a.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 hover:underline"
-                      >
-                        {a.title || `Article #${i+1}`}
-                      </a>
-                    </li>
-                  ))
-                )}
+                {articles.length === 0
+                  ? <li>No related articles found yet.</li>
+                  : articles.slice(0, 5).map((a, i) => (
+                      <li key={i}>
+                        <a
+                          href={a.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-600 hover:underline"
+                        >
+                          {a.title || `Article #${i + 1}`}
+                        </a>
+                      </li>
+                    ))
+                }
               </ul>
             </section>
           )
