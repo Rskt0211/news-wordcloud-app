@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 export default function Dashboard() {
   // Vite が inject してくれる base URL ('/' or '/news-wordcloud-app/')
-  const base = import.meta.env.BASE_URL || '/'
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '')
 
   // 最新バッチのタイムスタンプ state
   const [ts, setTs] = useState('')
@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   // ── 1) 起動時に最新タイムスタンプを取得 ───────────────
   useEffect(() => {
-    fetch(`${base}api/latest?limit=1`)
+    fetch(`${base}/api/latest?limit=1`)
       .then(res => {
         if (!res.ok) throw new Error('最新タイムスタンプ取得失敗')
         return res.json()
@@ -36,7 +36,7 @@ export default function Dashboard() {
     if (!ts) return
 
     categories.forEach(cat => {
-      fetch(`${base}static/${ts}/${cat}.json`)
+      fetch(`${base}/static/${ts}/${cat}.json`)
         .then(res => {
           if (!res.ok) throw new Error(`${cat}.json が取得できませんでした`)
           return res.json()
@@ -84,14 +84,14 @@ export default function Dashboard() {
           const articles = newsByCategory[cat] || []
           return (
             <section id={cat} key={cat} className="space-y-4">
-              <h2 className="text-2xl font-semibold">
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              <h2 className="text-2xl font-semibold capitalize">
+                {cat}
               </h2>
 
               {/* ワードクラウド画像 */}
               {ts ? (
                 <img
-                  src={`${base}static/${ts}/${cat}_wordcloud.png`}
+                  src={`${base}/static/${ts}/${cat}_wordcloud.png`}
                   alt={`${cat} wordcloud`}
                   className="w-full object-contain rounded shadow"
                 />
