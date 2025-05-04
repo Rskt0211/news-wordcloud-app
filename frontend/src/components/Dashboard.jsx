@@ -1,57 +1,42 @@
-// src/components/Dashboard.jsx
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+const categories = ['business','entertainment','general','health','technology']
+
 export default function Dashboard() {
-  // Vite が inject してくれる base URL ('/' or '/news-wordcloud-app/')
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+  // Vite が inject するベース URL
+  const base = import.meta.env.BASE_URL || '/'
 
-  // 最新バッチのタイムスタンプ state
-  const [ts, setTs] = useState('')
-
-  // 各カテゴリの関連記事 JSON
-  const [newsByCategory, setNewsByCategory] = useState({})
-
-  const categories = ['business','entertainment','general','health','technology']
-
-  // ── 1) 起動時に最新タイムスタンプを取得 ───────────────
+  // 最新タイムスタンプ取得
+  const [latestTS, setLatestTS] = useState('')
   useEffect(() => {
-    fetch(`${base}/api/latest?limit=1`)
+    fetch(`${base}static/latest.json`)
       .then(res => {
-        if (!res.ok) throw new Error('最新タイムスタンプ取得失敗')
+        if (!res.ok) throw new Error('latest.json が取得できませんでした')
         return res.json()
       })
       .then(arr => {
-        if (Array.isArray(arr) && arr.length > 0) {
-          setTs(arr[0])
-        }
+        if (Array.isArray(arr) && arr.length) setLatestTS(arr[0])
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(console.error)
   }, [base])
 
-  // ── 2) ts が取れたら各カテゴリの JSON を取得 ────────────
+  // 各カテゴリの記事 JSON 取得
+  const [newsByCategory, setNewsByCategory] = useState({})
   useEffect(() => {
-    if (!ts) return
-
+    if (!latestTS) return
     categories.forEach(cat => {
-      fetch(`${base}/static/${ts}/${cat}.json`)
+      fetch(`${base}static/${latestTS}/${cat}.json`)
         .then(res => {
-          if (!res.ok) throw new Error(`${cat}.json が取得できませんでした`)
+          if (!res.ok) throw new Error(`${cat}.json を取得できませんでした`)
           return res.json()
         })
-        .then(data => {
-          setNewsByCategory(prev => ({ ...prev, [cat]: data }))
-        })
-        .catch(err => {
-          console.error(err)
-          setNewsByCategory(prev => ({ ...prev, [cat]: [] }))
-        })
+        .then(data => setNewsByCategory(prev => ({ ...prev, [cat]: data })))
+        .catch(() => setNewsByCategory(prev => ({ ...prev, [cat]: [] })))
     })
-  }, [base, ts])
+  }, [base, latestTS])
 
-  // セクションへスクロール
+  // ボタンでスクロール
   const scrollTo = id => {
     const el = document.getElementById(id)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -59,14 +44,11 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-center mb-2">
-        World News Trends: What's Hot Now?
-      </h1>
-      <p className="text-center text-gray-600 mb-8">
-        Instantly grasp main topics by category.
-      </p>
+      <header className="text-center mb-8">
+        <h1 className="text-3xl font-bold">World News Trends: What's Hot Now?</h1>
+        <p className="text-gray-600">Instantly grasp main topics by category.</p>
+      </header>
 
-      {/* カテゴリボタン */}
       <div className="flex justify-center gap-4 mb-12">
         {categories.map(cat => (
           <button
@@ -79,54 +61,50 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-12">
+      <main className="space-y-16">
         {categories.map(cat => {
           const articles = newsByCategory[cat] || []
           return (
-            <section id={cat} key={cat} className="space-y-4">
-              <h2 className="text-2xl font-semibold capitalize">
-                {cat}
+            <section id={cat} key={cat}>
+              <h2 className="text-2xl font-semibold mb-4">
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
               </h2>
 
-              {/* ワードクラウド画像 */}
-              {ts ? (
+              {latestTS ? (
                 <img
-                  src={`${base}/static/${ts}/${cat}_wordcloud.png`}
+                  src={`${base}static/${latestTS}/${cat}_wordcloud.png`}
                   alt={`${cat} wordcloud`}
-                  className="w-full object-contain rounded shadow"
+                  className="w-full max-w-xl mx-auto mb-4"
                 />
               ) : (
-                <div className="w-full h-48 bg-gray-200 animate-pulse rounded" />
+                <div className="w-full max-w-xl h-48 bg-gray-200 mx-auto mb-4 animate-pulse rounded"></div>
               )}
 
-              {/* 関連ニュース */}
-              <h3 className="text-xl font-medium">Related Articles</h3>
+              <h3 className="text-xl font-medium mb-2">Related Articles</h3>
               <ul className="list-disc list-inside space-y-1">
-                {articles.length === 0 ? (
-                  <li>No related articles found yet.</li>
-                ) : (
-                  articles.slice(0, 5).map((a, i) => (
-                    <li key={i}>
-                      <a
-                        href={a.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-indigo-600 hover:underline"
-                      >
-                        {a.title || `Article #${i + 1}`}
-                      </a>
-                    </li>
-                  ))
-                )}
+                {articles.length === 0
+                  ? <li>No related articles found yet.</li>
+                  : articles.slice(0,5).map((a,i) => (
+                      <li key={i}>
+                        <a
+                          href={a.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-600 hover:underline"
+                        >
+                          {a.title || `Article #${i+1}`}
+                        </a>
+                      </li>
+                    ))
+                }
               </ul>
             </section>
           )
         })}
-      </div>
+      </main>
 
       <footer className="mt-16 text-center text-sm text-gray-500">
-        <p>Advertisement space<br/>
-        (Sponsor ads appear here in the free version)</p>
+        <p>Advertisement space<br/>(Sponsor ads appear here in the free version)</p>
       </footer>
     </div>
   )
