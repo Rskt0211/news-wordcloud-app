@@ -40,7 +40,7 @@ export default function Dashboard() {
     if (!latestTS) return
 
     categories.forEach(cat => {
-      fetch(`${base}/static/${latestTS}/${cat}.json`)
+      fetch(`${import.meta.env.BASE_URL}static/${latestTS}/${cat}.json`)
         .then(res => {
           if (!res.ok) throw new Error(`${cat}.json の取得に失敗しました`)
           return res.json()
@@ -80,7 +80,7 @@ export default function Dashboard() {
             {/* latestTS が取れていれば画像を表示 */}
             {latestTS ? (
               <img
-                src={`${base}/static/${latestTS}/${cat}_wordcloud.png`}
+                src={`${import.meta.env.BASE_URL}static/${ts}/${cat}_wordcloud.png`}
                 alt={`${cat} wordcloud`}
                 className="w-full h-36 object-contain mb-2"
                 onError={e => {

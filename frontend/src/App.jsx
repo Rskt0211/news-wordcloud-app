@@ -30,7 +30,7 @@ export default function App() {
   useEffect(() => {
     if (!latestTS) return
     categories.forEach(cat => {
-      fetch(`${base}/static/${latestTS}/${cat}.json`)
+      fetch(`${import.meta.env.BASE_URL}static/${latestTS}/${cat}.json`)
         .then(res => {
           if (!res.ok) throw new Error(`${cat}.json fetch failed`)
           return res.json()
@@ -82,7 +82,7 @@ export default function App() {
               {/* ワードクラウド画像 */}
               {latestTS ? (
                 <img
-                  src={`${base}/static/${latestTS}/${cat}_wordcloud.png`}
+                  src={`${import.meta.env.BASE_URL}static/${ts}/${cat}_wordcloud.png`}
                   alt={`${cat} wordcloud`}
                   className="w-full max-w-xl mx-auto mb-4"
                 />
