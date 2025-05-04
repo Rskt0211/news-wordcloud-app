@@ -1,0 +1,57 @@
+name: Build & Deploy Frontend to GH Pages
+
+# beta ブランチに push されたら、自動的に実行
+# 手動トリガーも可能
+on:
+  push:
+    branches:
+      - beta
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) リポジトリを丸ごとチェックアウト
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          # docs フォルダを含めて履歴丸ごと取得する
+          fetch-depth: 0
+
+      # 2) Node.js をセットアップ
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # 3) フロントエンドの依存をインストール
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # 4) フロントエンドをビルド → outDir: ../docs 以下に成果物が出力される
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      # 5) バックエンドで生成された最新の data を docs/static へコピー
+      - name: Copy latest static data
+        run: |
+          # backend/data 以下にある最新フォルダ名を拾う
+          LATEST=$(ls backend/data | sort | tail -n1)
+          mkdir -p docs/static/$LATEST
+          cp -r backend/data/$LATEST/* docs/static/$LATEST/
+
+      # 6) docs 配下の変更をコミット＆プッシュ
+      - name: Commit & Push docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs
+          # 変更があればコミット→プッシュ
+          git diff --quiet || (\
+            git commit -m "ci: build frontend and publish latest static data" && \
+            git push \
+          )
