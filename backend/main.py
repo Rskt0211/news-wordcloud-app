@@ -162,8 +162,9 @@ def fetch_news(category: str):
 def generate_wordcloud(text: str, save_path: Path):
     if not text.strip():
         return
+    # Ubuntu の GitHub Actions ランナー上で使えるフォントに変更
     wc = WordCloud(
-        font_path="C:/Windows/Fonts/msgothic.ttc",
+        font_path="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         width=800, height=400, background_color="white"
     )
     img = wc.generate(text)
