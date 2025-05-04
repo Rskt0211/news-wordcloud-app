@@ -198,5 +198,10 @@ scheduler.start()
 
 # ─── アプリ起動 ───────────────────────────────────────────────
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    import sys
+    # batch モードならバッチ実行して終了
+    if len(sys.argv) > 1 and sys.argv[1] == "batch":
+        update_all_categories()
+    else:
+        import uvicorn
+        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

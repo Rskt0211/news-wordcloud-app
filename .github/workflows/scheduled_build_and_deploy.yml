@@ -35,7 +35,11 @@ jobs:
       - name: Run data update batch
         working-directory: backend
         # .env を使わず、上で渡した env:NEWSAPI_KEY を参照します
-        run: python main.py
+        run: |
+         # Python／依存をインストールして
+         pip install -r backend/requirements.txt
+         # batch モードで実行 -> update_all_categories() のみ実行して終了
+         python backend/main.py batch  
 
       # ── 最新フォルダを docs/static 配下へコピー
       - name: Copy latest static data
