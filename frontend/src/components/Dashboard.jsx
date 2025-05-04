@@ -3,62 +3,59 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function Dashboard() {
-  // Vite の BASE_URL（例 '/news-wordcloud-app/'）の末尾スラッシュを除去
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+  // Vite が inject してくれる base URL ('/' or '/news-wordcloud-app/')
+  const base = import.meta.env.BASE_URL || '/'
 
-  // 最新バッチのタイムスタンプ
-  const [latestTS, setLatestTS] = useState('')
+  // 最新バッチのタイムスタンプ state
+  const [ts, setTs] = useState('')
 
-  // カテゴリごとの記事 JSON
+  // 各カテゴリの関連記事 JSON
   const [newsByCategory, setNewsByCategory] = useState({})
 
-  const categories = [
-    'business',
-    'entertainment',
-    'general',
-    'health',
-    'technology',
-  ]
+  const categories = ['business','entertainment','general','health','technology']
 
-  // 1) 起動時に最新タイムスタンプを取得
+  // ── 1) 起動時に最新タイムスタンプを取得 ───────────────
   useEffect(() => {
-    fetch(`${base}/api/latest?limit=1`)
+    fetch(`${base}api/latest?limit=1`)
       .then(res => {
-        if (!res.ok) throw new Error('最新タイムスタンプの取得に失敗しました')
+        if (!res.ok) throw new Error('最新タイムスタンプ取得失敗')
         return res.json()
       })
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setLatestTS(data[0])
+      .then(arr => {
+        if (Array.isArray(arr) && arr.length > 0) {
+          setTs(arr[0])
         }
       })
-      .catch(console.error)
+      .catch(err => {
+        console.error(err)
+      })
   }, [base])
 
-  // 2) latestTS が決まったらカテゴリごとの JSON を取得
+  // ── 2) ts が取れたら各カテゴリの JSON を取得 ────────────
   useEffect(() => {
-    if (!latestTS) return
+    if (!ts) return
 
     categories.forEach(cat => {
-      fetch(`${import.meta.env.BASE_URL}static/${latestTS}/${cat}.json`)
+      fetch(`${base}static/${ts}/${cat}.json`)
         .then(res => {
-          if (!res.ok) throw new Error(`${cat}.json の取得に失敗しました`)
+          if (!res.ok) throw new Error(`${cat}.json が取得できませんでした`)
           return res.json()
         })
         .then(data => {
-          setNewsByCategory(prev => ({
-            ...prev,
-            [cat]: data,
-          }))
+          setNewsByCategory(prev => ({ ...prev, [cat]: data }))
         })
-        .catch(() => {
-          setNewsByCategory(prev => ({
-            ...prev,
-            [cat]: [],
-          }))
+        .catch(err => {
+          console.error(err)
+          setNewsByCategory(prev => ({ ...prev, [cat]: [] }))
         })
     })
-  }, [base, latestTS])
+  }, [base, ts])
+
+  // セクションへスクロール
+  const scrollTo = id => {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
@@ -69,38 +66,68 @@ export default function Dashboard() {
         Instantly grasp main topics by category.
       </p>
 
-      <h2 className="text-xl font-semibold mb-4">Category List</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+      {/* カテゴリボタン */}
+      <div className="flex justify-center gap-4 mb-12">
         {categories.map(cat => (
-          <Link
+          <button
             key={cat}
-            to={`/detail/${cat}`}
-            className="flex flex-col items-center bg-white rounded-xl shadow hover:shadow-lg transition p-4"
+            onClick={() => scrollTo(cat)}
+            className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition"
           >
-            {/* latestTS が取れていれば画像を表示 */}
-            {latestTS ? (
-              <img
-                src={`${import.meta.env.BASE_URL}static/${ts}/${cat}_wordcloud.png`}
-                alt={`${cat} wordcloud`}
-                className="w-full h-36 object-contain mb-2"
-                onError={e => {
-                  e.currentTarget.onerror = null
-                  e.currentTarget.src = `${base}/placeholder.png`
-                }}
-              />
-            ) : (
-              // 取得前のプレースホルダー
-              <div className="w-full h-36 bg-gray-200 mb-2 animate-pulse rounded" />
-            )}
-
-            <span className="mt-1 text-lg font-medium capitalize">{cat}</span>
-          </Link>
+            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+          </button>
         ))}
       </div>
 
-      <div className="mt-12 py-8 bg-gray-100 text-center text-sm text-gray-500 rounded-lg">
-        Advertisement Space
+      <div className="grid grid-cols-1 gap-12">
+        {categories.map(cat => {
+          const articles = newsByCategory[cat] || []
+          return (
+            <section id={cat} key={cat} className="space-y-4">
+              <h2 className="text-2xl font-semibold">
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </h2>
+
+              {/* ワードクラウド画像 */}
+              {ts ? (
+                <img
+                  src={`${base}static/${ts}/${cat}_wordcloud.png`}
+                  alt={`${cat} wordcloud`}
+                  className="w-full object-contain rounded shadow"
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 animate-pulse rounded" />
+              )}
+
+              {/* 関連ニュース */}
+              <h3 className="text-xl font-medium">Related Articles</h3>
+              <ul className="list-disc list-inside space-y-1">
+                {articles.length === 0 ? (
+                  <li>No related articles found yet.</li>
+                ) : (
+                  articles.slice(0, 5).map((a, i) => (
+                    <li key={i}>
+                      <a
+                        href={a.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 hover:underline"
+                      >
+                        {a.title || `Article #${i + 1}`}
+                      </a>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </section>
+          )
+        })}
       </div>
+
+      <footer className="mt-16 text-center text-sm text-gray-500">
+        <p>Advertisement space<br/>
+        (Sponsor ads appear here in the free version)</p>
+      </footer>
     </div>
   )
 }
