@@ -8,7 +8,67 @@ on:
          - beta
  schedule:
     - cron: "0 6,18 * * *"
- workflow_dispatch:
+ workflow_dispatch:name: Scheduled Data Update & Frontend Build
+
+on:
+  schedule:
+    - cron: '0 6,18 * * *'      # 毎日 6:00, 18:00 (UTC では 21:00, 09:00) に実行
+  workflow_dispatch:          # 手動実行も可能
+  push:
+    branches:
+      - beta
+
+jobs:
+  update-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) リポジトリ丸ごとチェックアウト (docs フォルダも取得)
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # ─── バックエンドのバッチ処理（JSON・PNG を backend/data/<TIMESTAMP> に吐く） ───
+      - name: Run backend batch
+        working-directory: backend
+        run: |
+          pip install -r requirements.txt
+          python main.py   # ローカルでも毎回 update_all_categories() が走るようにしている前提
+
+      # 2) 最新フォルダ名を取得して static ディレクトリへコピー
+      - name: Copy latest static data
+        run: |
+          LATEST=$(ls backend/data | sort | tail -n1)
+          mkdir -p docs/static/$LATEST
+          cp backend/data/$LATEST/* docs/static/$LATEST/
+
+      # ─── フロントエンドのビルド ────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+        # ↓ vite.config.js の outDir: '../docs' が効いて docs/assets/index-*.js/css/index-*.css/index.html を更新
+
+      # 3) docs 以下をコミット＆プッシュ
+      - name: Commit & Push docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git diff --quiet || (
+            git commit -m "ci: update static data and rebuilt frontend assets"
+            git push
+          )
+
 
 jobs:
   update-and-deploy:
