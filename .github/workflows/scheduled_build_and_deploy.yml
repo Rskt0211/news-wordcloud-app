@@ -13,7 +13,6 @@ jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
 
-    # ここでジョブ全体にシークレットを注入
     env:
       NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
 
@@ -23,23 +22,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      # ── Python 環境
+      # ── Python 環境セットアップ
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install Python deps
-        run: pip install -r backend/requirements.txt
 
-      # ── データ更新バッチ実行
-      - name: Run data update batch
+      # ── backend/requirements.txt を install → バッチ実行
+      - name: Install backend deps & run batch
         working-directory: backend
-        # .env を使わず、上で渡した env:NEWSAPI_KEY を参照します
         run: |
-         # Python／依存をインストールして
-         pip install -r backend/requirements.txt
-         # batch モードで実行 -> update_all_categories() のみ実行して終了
-         python backend/main.py batch  
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          python main.py batch
 
       # ── 最新フォルダを docs/static 配下へコピー
       - name: Copy latest static data
@@ -60,12 +55,14 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # ── docs をコミット＆プッシュ (beta)
+      # ── docs & data をコミット＆プッシュ (beta)
       - name: Commit & Push updates
         run: |
+          # GitHub Actions の Push を走らせるためのユーザ設定
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs backend/data
-          git diff --quiet --cached \
-            || ( git commit -m "ci: update data ($LATEST) and rebuild frontend" \
-                 && git push origin beta )
+          git diff --quiet --cached || (
+            git commit -m "ci: update data ($LATEST) and rebuild frontend"
+            git push origin beta
+          )
