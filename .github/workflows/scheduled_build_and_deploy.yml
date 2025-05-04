@@ -47,6 +47,8 @@ jobs:
           LATEST=$(ls backend/data | sort | tail -n1)
           mkdir -p docs/static/$LATEST
           cp -r backend/data/$LATEST/* docs/static/$LATEST/
+         # フロントエンドが読むための最新タイムスタンプ一覧を作成
+         echo "[\"$LATEST\"]" > docs/static/latest.json
 
       # ── フロントエンドビルド
       - name: Setup Node.js

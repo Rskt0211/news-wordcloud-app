@@ -11,9 +11,11 @@ export default function App() {
   // カテゴリごとの関連記事データ
   const [newsByCategory, setNewsByCategory] = useState({})
 
-  // 1) 起動時に最新タイムスタンプを取得
+  
+  // 1) 起動時に最新タイムスタンプを static/latest.json から取得
   useEffect(() => {
-    fetch(`${base}/api/latest?limit=1`)
+    fetch(`${base}static/latest.json`)
+
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch latest timestamp')
         return res.json()
